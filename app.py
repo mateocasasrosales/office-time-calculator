@@ -117,10 +117,3 @@ else:
         f"Keep going! Only {remaining_hours}h {remaining_minutes}m left."
     )
 
-# Auto refresh every second
-st.markdown(
-"""
-<meta http-equiv="refresh" content="1">
-""",
-unsafe_allow_html=True
-)
