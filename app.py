@@ -1,34 +1,56 @@
 import streamlit as st
-from datetime import date
+from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
-st.set_page_config(page_title="Office Time Calculator")
+st.set_page_config(
+    page_title="Office Time Calculator",
+    page_icon="🏢",
+    layout="centered"
+)
 
 st.title("🏢 Office Time Calculator")
+st.caption("Calculate how long you've been at the company.")
 
 start_date = st.date_input(
-    "When did you join the company?",
+    "📅 Select your start date",
     value=date.today()
 )
 
 today = date.today()
 
-if start_date <= today:
+if start_date > today:
+    st.error("Start date cannot be in the future.")
+    st.stop()
 
-    diff = relativedelta(today, start_date)
+diff = relativedelta(today, start_date)
 
-    total_days = (today - start_date).days
-    total_weeks = total_days // 7
-    total_months = diff.years * 12 + diff.months
+total_days = (today - start_date).days
+total_weeks = total_days // 7
+total_months = diff.years * 12 + diff.months
 
-    st.metric(
-        "Time at the company",
-        f"{diff.years} years, {diff.months} months"
-    )
+st.divider()
 
-    st.write(f"**Days:** {total_days}")
-    st.write(f"**Weeks:** {total_weeks}")
-    st.write(f"**Months:** {total_months}")
+c1, c2, c3 = st.columns(3)
 
-else:
-    st.error("Choose a valid date.")
+c1.metric("Years", diff.years)
+c2.metric("Months", diff.months)
+c3.metric("Days", diff.days)
+
+st.divider()
+
+c4, c5, c6 = st.columns(3)
+
+c4.metric("Total Days", f"{total_days:,}")
+c5.metric("Total Weeks", f"{total_weeks:,}")
+c6.metric("Total Months", total_months)
+
+next_anniversary = date(start_date.year + diff.years + 1, start_date.month, start_date.day)
+days_left = (next_anniversary - today).days
+
+st.divider()
+
+st.success(
+    f"🎉 You've been at the company for **{diff.years} years, {diff.months} months, and {diff.days} days.**"
+)
+
+st.info(f"🏆 Next work anniversary in **{days_left} days**.")
